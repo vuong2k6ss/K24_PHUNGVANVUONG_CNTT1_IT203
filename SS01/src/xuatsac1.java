@@ -29,6 +29,6 @@ public class xuatsac1 {
         } else {
             System.out.println("Kết quả kiểm tra mã sách: SAI MÃ");
         }
-        
+
     }
 }
