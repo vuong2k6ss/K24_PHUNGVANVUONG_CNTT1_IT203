@@ -60,7 +60,7 @@ public class xuatsac1 {
         double totalSalary = 0;
         System.out.println("Danh sách lương nhân viên:");
 
-        int index = 1;
+        int index = 0;
         for (Employee e : employees) {
             double salary = e.calculateSalary();
             totalSalary += salary;
