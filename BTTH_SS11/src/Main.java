@@ -7,33 +7,34 @@ public class Main {
     static abstract class Drink{
         protected String id;
         protected String name;
-        protected String price;
+        protected double price;
 
-        public Drink(String id, String name, String price) {
+        public Drink(String id, String name, double price) {
             this.id = id;
             this.name = name;
             this.price = price;
         }
 
         public abstract double calculatePrice();
+        public void displayInfo(){
+            System.out.println("MÃ: "+ id);
+            System.out.println("Tên: "+ name);
+            System.out.println("giá gốc: "+ price);
+        }
     }
 
-    public void displayInfo(){
-        System.out.println("MÃ: "+ id);
-        System.out.println("Tên: "+ name);
-        System.out.println("giá gốc: "+ price);
-    }
+
 
     static class Coffee extends Drink{
         private boolean hasMilk;
 
-        public Coffee(String id, String name, String price, boolean hasMilk) {
+        public Coffee(String id, String name, double price, boolean hasMilk) {
             super(id, name, price);
             this.hasMilk = hasMilk;
         }
 
         @Override
-        double calculatePrice() {
+        public double calculatePrice() {
             if(hasMilk){
                 return price + 5000;
             }else {
@@ -56,13 +57,13 @@ public class Main {
     static class FruitJuice extends Drink implements IMIxable{
         private int discountPercent;
 
-        public FruitJuice(String id, String name, String price, int discountPercent) {
+        public FruitJuice(String id, String name, double price, int discountPercent) {
             super(id, name, price);
             this.discountPercent = discountPercent;
         }
 
         @Override
-        double calculatePrice(){
+        public double calculatePrice(){
             return 	price - (price * discountPercent / 100);
         }
 
@@ -75,8 +76,8 @@ public class Main {
 
     public static void main(String[] args) {
         Drink[] drinks = new Drink[3];
-        drinks[0] = new Coffee("1", "bạc sỉu", "30000", true);
-        drinks[1] = new Coffee("2", "nước cam", "40000", true);
+        drinks[0] = new Coffee("1", "bạc sỉu", 30000, true);
+        drinks[1] = new Coffee("2", "nước cam", 40000, true);
         drinks[2] = null;
 
         System.out.println("hóa đơn");
