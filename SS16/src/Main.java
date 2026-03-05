@@ -35,9 +35,9 @@ abstract class Product{
     public abstract void displayInfo();
 }
 
-abstract class EletronicProduct extends Product{
+class ElectronicProduct extends Product{
     private int warrantyMonths;
-    public EletronicProduct(String id, String name, double price, int warrantyMonths) {
+    public ElectronicProduct(String id, String name, double price, int warrantyMonths) {
         super(id, name, price);
         this.warrantyMonths = warrantyMonths;
     }
@@ -61,7 +61,7 @@ abstract class EletronicProduct extends Product{
     }
 }
 
-abstract class FoodProduct extends Product{
+class FoodProduct extends Product{
     private int discountPercent;
 
     public FoodProduct(String id, String name, double price, int discountPercent) {
@@ -84,15 +84,91 @@ abstract class FoodProduct extends Product{
     }
 }
 
-public class ProductRepository implements IRepository<Product>{
-    private List<Product> productlist = new ArrayList<>();
-    private Map<String ,Product> map = new HashMap<>();
-    
+class ProductRepository implements IRepository<Product>{
 
+    private List<Product> productList = new ArrayList<>();
+    private Map<String, Product> map = new HashMap<>();
+
+    @Override
+    public boolean add(Product item) {
+        if(item == null || map.containsKey(item.getId())){
+            return false;
+        }
+        productList.add(item);
+        map.put(item.getId(), item);
+        return true;
+    }
+
+    @Override
+    public boolean removeById(String id) {
+        if(id == null || !map.containsKey(id)){
+            return false;
+        }
+        Product p = map.remove(id);
+        productList.remove(p);
+        return true;
+    }
+
+    @Override
+    public Product findById(String id) {
+        if(id == null){
+            return null;
+        }
+        return map.get(id);
+    }
+
+    @Override
+    public List<Product> findAll() {
+        return productList;
+    }
 }
 
 public class Main {
     public static void main(String[] args) {
 
+        ProductRepository repo = new ProductRepository();
+
+        // Thêm sản phẩm
+        repo.add(new ElectronicProduct("E01", "Laptop", 15000000, 24));
+        repo.add(new ElectronicProduct("E02", "Tai nghe", 2000000, 6));
+        repo.add(new FoodProduct("F01", "Bánh", 50000, 10));
+        repo.add(new FoodProduct("F02", "Sữa", 30000, 5));
+
+        // Hiển thị toàn bộ
+        System.out.println("===== DANH SÁCH SẢN PHẨM =====");
+        for(Product p : repo.findAll()){
+            p.displayInfo();
+            System.out.println("Thành tiền: " + p.calculateFinalPrice());
+            System.out.println("-----------------------");
+        }
+
+        // Tìm theo ID
+        System.out.println("===== TÌM SẢN PHẨM E01 =====");
+        Product found = repo.findById("E01");
+        if(found != null){
+            found.displayInfo();
+        } else {
+            System.out.println("Không tìm thấy");
+        }
+
+        // Sắp xếp theo giá tăng dần
+        System.out.println("===== SẮP XẾP THEO GIÁ =====");
+        List<Product> list = repo.findAll();
+        Collections.sort(list, Comparator.comparingDouble(Product::getPrice));
+
+        for(Product p : list){
+            System.out.println(p.getId() + " - " + p.getPrice());
+        }
+
+        // Thống kê theo loại
+        System.out.println("===== THỐNG KÊ =====");
+        Map<String, Integer> stats = new HashMap<>();
+
+        for(Product p : repo.findAll()){
+            String type = p.getClass().getSimpleName();
+            stats.put(type, stats.getOrDefault(type, 0) + 1);
+        }
+
+        System.out.println(stats);
     }
 }
